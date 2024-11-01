@@ -1,0 +1,412 @@
+# Full-Stack Development Standards
+
+## Technology Stack
+- Frontend: React, Next.js (planned), TypeScript
+- Backend: Flask, SQLAlchemy
+- State Management: Zustand
+- UI: Radix UI, Shadcn UI
+- Styling: Tailwind CSS, Stylus
+- Testing: Jest, React Testing Library, pytest
+- Build Tools: Vite (current), Next.js (planned)
+
+## Code Style and Structure
+- Write clean, typed TypeScript/Python code
+- Use functional programming patterns; avoid classes in frontend code
+- Prefer iteration and modularization over code duplication
+- Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError)
+- Structure React files: exported component, subcomponents, helpers, static content
+- Structure Python files: imports, config, models, routes/controllers, helpers
+
+## TypeScript/JavaScript Standards
+- Use 2 space indentation
+- Use single quotes for strings except to avoid escaping
+- No semicolons (unless required to disambiguate statements)
+- No unused variables
+- Add a space after keywords
+- Add a space before function declarations
+- Always use === instead of ==
+- Infix operators must be spaced
+- Commas should have a space after them
+- Keep else statements on same line as curly braces
+- Use curly braces for multi-line if statements
+- Always handle errors appropriately
+- Use camelCase for variables/functions
+- Use PascalCase for React components
+
+## Python Standards
+- Use 4 space indentation
+- Follow PEP 8 guidelines
+- Use type hints
+- Use docstrings for classes and functions
+- Handle exceptions appropriately
+- Use snake_case for variables/functions
+- Use PascalCase for classes
+
+## File Structure
+```
+app/
+  routes/
+  models/
+  services/
+  utils/
+  tests/
+web/
+  src/
+    components/
+      feature-name/
+        FeatureName.tsx
+        FeatureName.test.tsx
+        FeatureName.module.styl
+    hooks/
+    stores/
+    utils/
+    types/
+```
+
+## React/Next.js Best Practices
+- Use Server Components by default in Next.js
+- Only use 'use client' when necessary
+- Implement proper error boundaries
+- Use TypeScript for type safety
+- Follow React Server Components patterns:
+  ```typescript
+  // Server Component (default)
+  async function UserProfile({ id }: { id: string }) {
+    const user = await fetchUser(id)
+    return <div>{user.name}</div>
+  }
+
+  // Client Component (when needed)
+  'use client'
+  function InteractiveButton() {
+    const [count, setCount] = useState(0)
+    return <button onClick={() => setCount(count + 1)}>{count}</button>
+  }
+  ```
+
+## State Management
+- Use Zustand for global state
+- Implement proper state splitting
+- Example store pattern:
+```typescript
+interface UserStore {
+  user: User | null
+  setUser: (user: User) => void
+  logout: () => void
+}
+
+const useUserStore = create<UserStore>((set) => ({
+  user: null,
+  setUser: (user) => set({ user }),
+  logout: () => set({ user: null })
+}))
+```
+
+## API Integration
+- Use typed API calls
+- Handle errors gracefully
+- Implement proper loading states
+```typescript
+interface ApiResponse<T> {
+  data?: T
+  error?: string
+  loading: boolean
+}
+
+async function fetchData<T>(url: string): Promise<ApiResponse<T>> {
+  try {
+    const response = await fetch(url)
+    const data = await response.json()
+    return { data, loading: false }
+  } catch (error) {
+    return { error: error.message, loading: false }
+  }
+}
+```
+
+## Styling Approach
+- Use Tailwind for layout and simple styling
+- Use Stylus modules for complex component-specific styles
+- Never use @apply directive
+- Example hybrid approach:
+```typescript
+import styles from './Card.module.styl'
+
+function Card({ children }) {
+  return (
+    <div className={`p-4 rounded-lg shadow-md ${styles.cardContainer}`}>
+      {children}
+    </div>
+  )
+}
+```
+
+## Testing
+- Write unit tests for components and utilities
+- Use integration tests for critical flows
+- Test server components appropriately
+```typescript
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+
+test('button click increments counter', async () => {
+  render(<Counter />)
+  await userEvent.click(screen.getByRole('button'))
+  expect(screen.getByText('1')).toBeInTheDocument()
+})
+```
+
+## Performance
+- Use React Suspense for loading states
+- Implement proper code splitting
+- Optimize images and assets
+- Monitor Core Web Vitals
+- Use proper caching strategies
+
+## Security
+- Implement proper CSRF protection
+- Sanitize user inputs
+- Use proper authentication/authorization
+- Follow OWASP guidelines
+
+## Accessibility
+- Use semantic HTML
+- Implement ARIA attributes
+- Ensure keyboard navigation
+- Test with screen readers
+
+This standard guide aligns with your current codebase as seen in:
+
+```1:146:web/src/App.tsx
+import { Flex, Heading, Separator, Table } from '@radix-ui/themes';
+import { useEffect, useState } from 'react';
+import Plot from 'react-plotly.js';
+import { Link } from 'react-router-dom';
+import { Routes } from 'routes';
+
+// Input data from the simulation
+type AgentData = Record<string, number>;
+type DataFrame = Record<string, AgentData>;
+type DataPoint = [number, number, DataFrame];
+
+// Output data to the plot
+type PlottedAgentData = Record<string, number[]>;
+type PlottedFrame = Record<string, PlottedAgentData>;
+
+const App = () => {
+  // Store plot data in state.
+  const [positionData, setPositionData] = useState<PlottedAgentData[]>([]);
+  const [velocityData, setVelocityData] = useState<PlottedAgentData[]>([]);
+  const [initialState, setInitialState] = useState<DataFrame>({});
+
+  useEffect(() => {
+    // fetch plot data when the component mounts
+    let canceled = false;
+
+    async function fetchData() {
+      console.log('calling fetchdata...');
+
+      try {
+        // data should be populated from a POST call to the simulation server
+        const response = await fetch('http://localhost:8000/simulation');
+        if (canceled) return;
+        const data: DataPoint[] = await response.json();
+        const updatedPositionData: PlottedFrame = {};
+        const updatedVelocityData: PlottedFrame = {};
+
+        setInitialState(data[0][2]);
+
+        data.forEach(([t0, t1, frame]) => {
+          for (let [agentId, { x, y, vx, vy }] of Object.entries(frame)) {
+            updatedPositionData[agentId] = updatedPositionData[agentId] || { x: [], y: [] };
+            updatedPositionData[agentId].x.push(x);
+            updatedPositionData[agentId].y.push(y);
+
+            updatedVelocityData[agentId] = updatedVelocityData[agentId] || { x: [], y: [] };
+            updatedVelocityData[agentId].x.push(vx);
+            updatedVelocityData[agentId].y.push(vy);
+          }
+        });
+
+        setPositionData(Object.values(updatedPositionData));
+        setVelocityData(Object.values(updatedVelocityData));
+        console.log('Set plot data!');
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    fetchData();
+
+    return () => {
+      canceled = true;
+    };
+  }, []);
+  return (
+    <div
+      style={{
+        height: '100vh',
+        width: '100vw',
+        margin: '0 auto',
+      }}
+    >
+      {/* Flex: https://www.radix-ui.com/themes/docs/components/flex */}
+      <Flex direction='column' m='4' width='100%' justify='center' align='center'>
+        <Heading as='h1' size='8' weight='bold' mb='4'>
+          Simulation Data
+        </Heading>
+        <Link to={Routes.FORM}>Define new simulation parameters</Link>
+        <Separator size='4' my='5' />
+        <Flex direction='row' width='100%' justify='center'>
+          <Plot
+            style={{ width: '45%', height: '100%', margin: '5px' }}
+            data={positionData}
+            layout={{
+              title: 'Position',
+              yaxis: { scaleanchor: 'x' },
+              autosize: true,
+              dragmode: 'pan',
+            }}
+            useResizeHandler
+            config={{
+              scrollZoom: true,
+            }}
+          />
+          <Plot
+            style={{ width: '45%', height: '100%', margin: '5px' }}
+            data={velocityData}
+            layout={{
+              title: 'Velocity',
+              yaxis: { scaleanchor: 'x' },
+              autosize: true,
+              dragmode: 'pan',
+            }}
+            useResizeHandler
+            config={{
+              scrollZoom: true,
+            }}
+          />
+        </Flex>
+        <Flex justify='center' width='100%' m='4'>
+          <Table.Root
+            style={{
+              width: '800px',
+            }}
+          >
+            {/* Table: https://www.radix-ui.com/themes/docs/components/table */}
+            <Table.Header>
+              <Table.Row>
+                <Table.ColumnHeaderCell>Agent</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Initial Position (x,y)</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Initial Velocity (x,y)</Table.ColumnHeaderCell>
+              </Table.Row>
+            </Table.Header>
+
+            <Table.Body>
+              {Object.entries(initialState).map(([agentId, { x, y, vx, vy }]) => (
+                <Table.Row key={agentId}>
+                  <Table.RowHeaderCell>{agentId}</Table.RowHeaderCell>
+                  <Table.Cell>
+                    ({x}, {y})
+                  </Table.Cell>
+                  <Table.Cell>
+                    ({vx}, {vy})
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Root>
+        </Flex>
+      </Flex>
+    </div>
+  );
+};
+
+export default App;
+```
+
+
+And your Flask backend structure as shown in:
+
+```1:80:app/app.py
+# HTTP SERVER
+
+import json
+
+from flask import Flask, request
+from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
+from simulator import Simulator
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from store import QRangeStore
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+############################## Application Configuration ##############################
+
+app = Flask(__name__)
+CORS(app, origins=["http://localhost:3000"])
+
+db = SQLAlchemy(model_class=Base)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+db.init_app(app)
+
+
+############################## Database Models ##############################
+
+
+class Simulation(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    data: Mapped[str]
+
+
+with app.app_context():
+    db.create_all()
+
+
+############################## API Endpoints ##############################
+
+
+@app.get("/")
+def health():
+    return "<p>Sedaro Nano API - running!</p>"
+
+
+@app.get("/simulation")
+def get_data():
+    # Get most recent simulation from database
+    simulation: Simulation = Simulation.query.order_by(Simulation.id.desc()).first()
+    return simulation.data if simulation else []
+
+
+@app.post("/simulation")
+def simulate():
+    # Get data from request in this form
+    # init = {
+    #     "Planet": {"x": 0, "y": 0.1, "vx": 0.1, "vy": 0},
+    #     "Satellite": {"x": 0, "y": 1, "vx": 1, "vy": 0},
+    # }
+
+    # Define time and timeStep for each agent
+    init: dict = request.json
+    for key in init.keys():
+        init[key]["time"] = 0
+        init[key]["timeStep"] = 0.01
+
+    # Create store and simulator
+    store = QRangeStore()
+    simulator = Simulator(store=store, init=init)
+
+    # Run simulation
+    simulator.simulate()
+
+    # Save data to database
+    simulation = Simulation(data=json.dumps(store.store))
+    db.session.add(simulation)
+    db.session.commit()
+
+    return store.store
+```

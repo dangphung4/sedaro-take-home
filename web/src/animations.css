@@ -32,4 +32,21 @@
   .plot-container:hover {
     transform: none;
   }
+}
+
+.form-field-transition {
+  transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+  will-change: transform, opacity;
+}
+
+.slider-transition {
+  transition: all 0.2s ease-out;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-field-transition,
+  .slider-transition {
+    transition: none;
+  }
 } 

@@ -65,82 +65,106 @@ const App = () => {
     };
   }, []);
 
+  // Updated plot configuration with modern styling
   const plotConfig = {
     style: { 
       width: '100%', 
-      height: '450px',
+      height: '500px', // Increased height
     },
     layout: {
       template: 'plotly_dark',
-      paper_bgcolor: 'transparent',
-      plot_bgcolor: 'transparent',
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
       font: {
-        family: 'Inter',
-        color: '#a1a1aa',
-        size: 11
+        family: 'Inter, system-ui, sans-serif',
+        color: '#94a3b8',
+        size: 12
       },
       xaxis: {
         showgrid: true,
-        gridwidth: 1,
-        gridcolor: 'rgba(255,255,255,0.05)',
+        gridwidth: 0.5,
+        gridcolor: 'rgba(148, 163, 184, 0.1)',
         zeroline: false,
-        showline: false,
+        showline: true,
+        linecolor: 'rgba(148, 163, 184, 0.2)',
       },
       yaxis: {
         showgrid: true,
-        gridwidth: 1,
-        gridcolor: 'rgba(255,255,255,0.05)',
+        gridwidth: 0.5,
+        gridcolor: 'rgba(148, 163, 184, 0.1)',
         zeroline: false,
-        showline: false,
+        showline: true,
+        linecolor: 'rgba(148, 163, 184, 0.2)',
         scaleanchor: 'x',
       },
-      margin: { t: 32, r: 16, b: 32, l: 16 },
+      margin: { t: 40, r: 20, b: 40, l: 20 },
       showlegend: true,
       legend: {
         orientation: 'h',
-        y: 1.1,
-        x: 0,
-        xanchor: 'left',
-        bgcolor: 'transparent',
-        font: { size: 11 }
+        y: 1.12,
+        x: 0.5,
+        xanchor: 'center',
+        bgcolor: 'rgba(0,0,0,0)',
+        font: { size: 12 }
       },
       hovermode: 'closest',
     },
     config: {
       displaylogo: false,
-      displayModeBar: false,
+      displayModeBar: true,
       responsive: true,
       scrollZoom: true,
     }
   };
 
   return (
-    <Container size="4" style={{ background: '#121212', minHeight: '100vh' }}>
-      <Flex direction="column" gap="5" py="6">
-        {/* Header */}
-        <Flex justify="between" align="center" mb="6">
-          <Heading as="h1" size="8" style={{ color: '#ffffff' }}>
+    <Container style={{ 
+      background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
+      minHeight: '100vh',
+      maxWidth: '1600px', // Increased max width
+      padding: '2rem'
+    }}>
+      <Flex direction="column" gap="6" py="6">
+        {/* Header with gradient text */}
+        <Flex justify="between" align="center" mb="8">
+          <Heading as="h1" size="8" style={{ 
+            background: 'linear-gradient(to right, #60a5fa, #818cf8)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            fontWeight: 700
+          }}>
             Orbital Simulation
           </Heading>
-          <Link to={Routes.FORM} className="fade-in">
-            <Button variant="soft" size="3" style={{ 
-              background: '#333333', 
-              color: '#ffffff',
-              border: '1px solid #444444'
+          <Link to={Routes.FORM}>
+            <Button size="3" style={{ 
+              background: 'rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              color: '#fff',
+              transition: 'all 0.2s',
+              ':hover': {
+                background: 'rgba(255,255,255,0.15)',
+                transform: 'translateY(-1px)'
+              }
             }}>
               New Simulation
             </Button>
           </Link>
         </Flex>
 
-        {/* Plots */}
-        <Flex gap="4" direction={{ initial: 'column', md: 'row' }}>
-          <Card className="plot-container fade-in" style={{ 
-            flex: 1, 
-            background: '#1a1a1a',
-            border: '1px solid #333333',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+        {/* Plots with glass morphism effect */}
+        <Flex gap="6" direction={{ initial: 'column', md: 'row' }}>
+          <Card style={{ 
+            flex: 1,
+            background: 'rgba(255,255,255,0.03)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: '16px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+            overflow: 'hidden',
+            padding: '1.5rem'
           }}>
+            <Text size="2" mb="4" style={{ color: '#94a3b8', fontWeight: 500 }}>Position Plot</Text>
             <Plot
               {...plotConfig}
               data={positionData.map((data, idx) => ({
@@ -148,76 +172,74 @@ const App = () => {
                 name: idx === 0 ? 'Planet' : 'Satellite',
                 mode: 'lines',
                 line: {
-                  color: idx === 0 ? '#3b82f6' : '#22c55e',
-                  width: 1.5,
+                  color: idx === 0 ? '#3b82f6' : '#10b981',
+                  width: 2,
+                  shape: 'spline',
                 },
-                showlegend: true,
               }))}
             />
           </Card>
 
-          <Card className="plot-container fade-in" style={{ 
+          <Card style={{ 
             flex: 1,
-            background: '#1a1a1a',
-            border: '1px solid #333333',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+            background: 'rgba(255,255,255,0.03)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: '16px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+            overflow: 'hidden',
+            padding: '1.5rem'
           }}>
+            <Text size="2" mb="4" style={{ color: '#94a3b8', fontWeight: 500 }}>Velocity Plot</Text>
             <Plot
               {...plotConfig}
               data={velocityData.map((data, idx) => ({
                 ...data,
                 name: idx === 0 ? 'Planet' : 'Satellite',
                 mode: 'lines',
-                marker: { 
-                  size: idx === 0 ? 6 : 4,
-                  symbol: 'circle',
-                  color: idx === 0 ? '#00ffff' : '#ff6b6b'
-                },
                 line: { 
-                  width: idx === 0 ? 1.5 : 1,
-                  color: idx === 0 ? '#00ffff' : '#ff6b6b',
+                  color: idx === 0 ? '#06b6d4' : '#f43f5e',
+                  width: 2,
                   shape: 'spline',
-                  smoothing: 1.3,
-                  simplify: true
                 }
               }))}
-              layout={{
-                ...plotConfig.layout,
-                title: {
-                  text: 'Velocity',
-                  font: { size: 16, color: '#ffffff' }
-                }
-              }}
             />
           </Card>
         </Flex>
 
-        {/* Initial Conditions Table */}
-        <Card className="fade-in" style={{ 
-          background: '#1a1a1a',
-          border: '1px solid #333333',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+        {/* Initial Conditions Table with modern styling */}
+        <Card style={{ 
+          background: 'rgba(255,255,255,0.03)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: '16px',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+          padding: '1.5rem'
         }}>
+          <Text size="2" mb="4" style={{ color: '#94a3b8', fontWeight: 500 }}>Initial Conditions</Text>
           <Table.Root>
             <Table.Header>
               <Table.Row>
-                <Table.ColumnHeaderCell style={{ color: '#888888' }}>Agent</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell style={{ color: '#888888' }}>Initial Position (x,y)</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell style={{ color: '#888888' }}>Initial Velocity (x,y)</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell style={{ color: '#64748b', fontWeight: 600 }}>Agent</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell style={{ color: '#64748b', fontWeight: 600 }}>Initial Position (x,y)</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell style={{ color: '#64748b', fontWeight: 600 }}>Initial Velocity (x,y)</Table.ColumnHeaderCell>
               </Table.Row>
             </Table.Header>
 
             <Table.Body>
               {Object.entries(initialState).map(([agentId, { x, y, vx, vy }]) => (
-                <Table.Row key={agentId}>
+                <Table.Row key={agentId} style={{ 
+                  transition: 'background 0.2s',
+                  ':hover': { background: 'rgba(255,255,255,0.05)' }
+                }}>
                   <Table.RowHeaderCell>
-                    <Text weight="medium" style={{ color: '#ffffff' }}>{agentId}</Text>
+                    <Text weight="medium" style={{ color: '#e2e8f0' }}>{agentId}</Text>
                   </Table.RowHeaderCell>
-                  <Table.Cell style={{ color: '#888888' }}>
-                    ({x.toFixed(2)}, {y.toFixed(2)})
+                  <Table.Cell style={{ color: '#94a3b8' }}>
+                    ({x.toFixed(3)}, {y.toFixed(3)})
                   </Table.Cell>
-                  <Table.Cell style={{ color: '#888888' }}>
-                    ({vx.toFixed(2)}, {vy.toFixed(2)})
+                  <Table.Cell style={{ color: '#94a3b8' }}>
+                    ({vx.toFixed(3)}, {vy.toFixed(3)})
                   </Table.Cell>
                 </Table.Row>
               ))}

@@ -1,5 +1,5 @@
 import { Form, FormField, FormLabel } from '@radix-ui/react-form';
-import { Button, Card, Flex, Heading, Separator, TextField } from '@radix-ui/themes';
+import { Button, Card, Flex, Heading, Separator, TextField, Slider } from '@radix-ui/themes'; // Added Slider import
 import _ from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -63,13 +63,16 @@ const SimulateForm: React.FC = () => {
         position: 'absolute',
         top: '5%',
         left: 'calc(50% - 200px)',
-        overflow: 'scroll',
+        borderRadius: '8px', // Rounded corners
+        padding: '20px', // Padding for better spacing
       }}
     >
-      {/* Card: https://www.radix-ui.com/themes/docs/components/card */}
       <Card
         style={{
           width: '400px',
+          padding: '20px', // Added padding for card
+          borderRadius: '8px', // Rounded corners for card
+          overflow: 'hidden', // Remove overflow
         }}
       >
         <Heading as='h2' size='4' weight='bold' mb='4'>
@@ -78,111 +81,72 @@ const SimulateForm: React.FC = () => {
         <Link to={Routes.SIMULATION}>View previous simulation</Link>
         <Separator size='4' my='5' />
         <Form onSubmit={handleSubmit}>
-          {/* 
-            *********************************
-            Planet
-            *********************************
-            */}
+          {/* Planet Section */}
           <Heading as='h3' size='3' weight='bold'>
             Planet
           </Heading>
-          {/* Form: https://www.radix-ui.com/primitives/docs/components/form */}
-          <FormField name='Planet.x'>
-            <FormLabel htmlFor='Planet.x'>Initial X-position</FormLabel>
-            <TextField.Root
-              type='number'
-              id='Planet.x'
-              name='Planet.x'
-              value={formData.Planet.x}
-              onChange={handleChange}
-              required
-            />
-          </FormField>
-          <FormField name='Planet.y'>
-            <FormLabel htmlFor='Planet.y'>Initial Y-position</FormLabel>
-            <TextField.Root
-              type='number'
-              id='Planet.y'
-              name='Planet.y'
-              value={formData.Planet.y}
-              onChange={handleChange}
-              required
-            />
-          </FormField>
-          <FormField name='Planet.vx'>
-            <FormLabel htmlFor='Planet.vx'>Initial X-velocity</FormLabel>
-            <TextField.Root
-              type='number'
-              id='Planet.vx'
-              name='Planet.vx'
-              value={formData.Planet.vx}
-              onChange={handleChange}
-              required
-            />
-          </FormField>
-          <FormField name='Planet.vy'>
-            <FormLabel htmlFor='Planet.vy'>Initial Y-velocity</FormLabel>
-            <TextField.Root
-              type='number'
-              id='Planet.vy'
-              name='Planet.vy'
-              value={formData.Planet.vy}
-              onChange={handleChange}
-              required
-            />
-          </FormField>
-          {/* 
-            *********************************
-            Satellite
-            *********************************
-             */}
+          {['x', 'y', 'vx', 'vy'].map((field) => (
+            <FormField key={`Planet.${field}`} name={`Planet.${field}`}>
+              <FormLabel htmlFor={`Planet.${field}`}>Initial {field.toUpperCase()}</FormLabel>
+              <Flex align="center">
+                <TextField.Root
+                  type='number'
+                  id={`Planet.${field}`}
+                  name={`Planet.${field}`}
+                  value={formData.Planet[field]}
+                  onChange={handleChange}
+                  required
+                  style={{ width: '60px', marginRight: '10px' }} // Adjusted width for text field
+                />
+                <Slider
+                  defaultValue={[formData.Planet[field] as number]}
+                  max={1000} // Adjust max value as needed
+                  min={-1000} // Adjust min value as needed
+                  step={0.1}
+                  onValueChange={(value) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      Planet: { ...prev.Planet, [field]: value[0] },
+                    }));
+                  }}
+                  style={{ width: '100%' }} // Full width for slider
+                />
+              </Flex>
+            </FormField>
+          ))}
+          {/* Satellite Section */}
           <Heading as='h3' size='3' weight='bold' mt='4'>
             Satellite
           </Heading>
-          <FormField name='Satellite.x'>
-            <FormLabel htmlFor='Satellite.x'>Initial X-position</FormLabel>
-            <TextField.Root
-              type='number'
-              id='Satellite.x'
-              name='Satellite.x'
-              value={formData.Satellite.x}
-              onChange={handleChange}
-              required
-            />
-          </FormField>
-          <FormField name='Satellite.y'>
-            <FormLabel htmlFor='Satellite.y'>Initial Y-position</FormLabel>
-            <TextField.Root
-              type='number'
-              id='Satellite.y'
-              name='Satellite.y'
-              value={formData.Satellite.y}
-              onChange={handleChange}
-              required
-            />
-          </FormField>
-          <FormField name='Satellite.vx'>
-            <FormLabel htmlFor='Satellite.vx'>Initial X-velocity</FormLabel>
-            <TextField.Root
-              type='number'
-              id='Satellite.vx'
-              name='Satellite.vx'
-              value={formData.Satellite.vx}
-              onChange={handleChange}
-              required
-            />
-          </FormField>
-          <FormField name='Satellite.vy'>
-            <FormLabel htmlFor='Satellite.vy'>Initial Y-velocity</FormLabel>
-            <TextField.Root
-              type='number'
-              id='Satellite.vy'
-              name='Satellite.vy'
-              value={formData.Satellite.vy}
-              onChange={handleChange}
-              required
-            />
-          </FormField>
+          {['x', 'y', 'vx', 'vy'].map((field) => (
+            <FormField key={`Satellite.${field}`} name={`Satellite.${field}`}>
+              <FormLabel htmlFor={`Satellite.${field}`}>Initial {field.toUpperCase()}</FormLabel>
+              <Flex align="center">
+                <TextField.Root
+                  type='number'
+                  id={`Satellite.${field}`}
+                  name={`Satellite.${field}`}
+                  value={formData.Satellite[field]}
+                  onChange={handleChange}
+                  required
+                  style={{ width: '60px', marginRight: '10px' }} // Adjusted width for text field
+                />
+                <Slider
+                  defaultValue={[formData.Satellite[field] as number]}
+                  max={1000} // Adjust max value as needed
+                  min={-1000} // Adjust min value as needed
+                  step={0.1}
+                  onValueChange={(value) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      Satellite: { ...prev.Satellite, [field]: value[0] },
+                    }));
+                  }}
+                  style={{ width: '100%' }} // Full width for slider
+                />
+              </Flex>
+            </FormField>
+          ))}
           <Flex justify='center' m='5'>
             <Button type='submit'>Submit</Button>
           </Flex>

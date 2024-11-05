@@ -8,6 +8,7 @@ import App from './App';
 import './index.css';
 import NotFound from './NotFound';
 import SimulateForm from './SimulateForm';
+import './animations.css';
 
 const router = createBrowserRouter([
   {

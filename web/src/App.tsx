@@ -69,53 +69,48 @@ const App = () => {
     style: { 
       width: '100%', 
       height: '450px',
-      borderRadius: '12px',
-      background: 'var(--gray-1)',
     },
     layout: {
       template: 'plotly_dark',
-      paper_bgcolor: '#1a1a1a',
-      plot_bgcolor: '#1a1a1a',
+      paper_bgcolor: 'transparent',
+      plot_bgcolor: 'transparent',
       font: {
-        family: 'Inter, system-ui, sans-serif',
-        size: 12,
-        color: '#ffffff'
-      },
-      yaxis: { 
-        scaleanchor: 'x',
-        gridcolor: '#333333',
-        zerolinecolor: '#333333',
-        tickfont: { size: 10, color: '#888888' }
+        family: 'Inter',
+        color: '#a1a1aa',
+        size: 11
       },
       xaxis: {
-        gridcolor: '#333333',
-        zerolinecolor: '#333333',
-        tickfont: { size: 10, color: '#888888' }
+        showgrid: true,
+        gridwidth: 1,
+        gridcolor: 'rgba(255,255,255,0.05)',
+        zeroline: false,
+        showline: false,
       },
-      autosize: true,
-      dragmode: 'pan',
-      margin: { t: 40, r: 20, b: 40, l: 40 },
+      yaxis: {
+        showgrid: true,
+        gridwidth: 1,
+        gridcolor: 'rgba(255,255,255,0.05)',
+        zeroline: false,
+        showline: false,
+        scaleanchor: 'x',
+      },
+      margin: { t: 32, r: 16, b: 32, l: 16 },
       showlegend: true,
       legend: {
-        x: 0.02,
-        y: 0.98,
-        bgcolor: 'rgba(0,0,0,0)',
-        font: { size: 10, color: '#888888' }
-      }
+        orientation: 'h',
+        y: 1.1,
+        x: 0,
+        xanchor: 'left',
+        bgcolor: 'transparent',
+        font: { size: 11 }
+      },
+      hovermode: 'closest',
     },
     config: {
-      scrollZoom: true,
-      responsive: true,
-      displayModeBar: 'hover',
       displaylogo: false,
-      modeBarButtonsToRemove: ['select2d', 'lasso2d', 'autoScale2d'],
-      toImageButtonOptions: {
-        format: 'svg',
-        filename: 'orbital_simulation',
-        height: 1000,
-        width: 1400,
-        scale: 1
-      }
+      displayModeBar: false,
+      responsive: true,
+      scrollZoom: true,
     }
   };
 
@@ -150,26 +145,14 @@ const App = () => {
               {...plotConfig}
               data={positionData.map((data, idx) => ({
                 ...data,
-                name: `Agent ${idx + 1}`,
-                mode: 'lines+markers',
-                marker: { 
-                  size: 6,
-                  symbol: idx === 0 ? 'circle' : 'diamond',
-                  color: idx === 0 ? '#00ffff' : '#ff6b6b'
-                },
-                line: { 
+                name: idx === 0 ? 'Planet' : 'Satellite',
+                mode: 'lines',
+                line: {
+                  color: idx === 0 ? '#3b82f6' : '#22c55e',
                   width: 1.5,
-                  dash: idx === 0 ? 'solid' : 'dot',
-                  color: idx === 0 ? '#00ffff' : '#ff6b6b'
-                }
+                },
+                showlegend: true,
               }))}
-              layout={{
-                ...plotConfig.layout,
-                title: {
-                  text: 'Position',
-                  font: { size: 16, color: '#ffffff' }
-                }
-              }}
             />
           </Card>
 
@@ -183,17 +166,19 @@ const App = () => {
               {...plotConfig}
               data={velocityData.map((data, idx) => ({
                 ...data,
-                name: `Agent ${idx + 1}`,
-                mode: 'lines+markers',
+                name: idx === 0 ? 'Planet' : 'Satellite',
+                mode: 'lines',
                 marker: { 
-                  size: 6,
-                  symbol: idx === 0 ? 'circle' : 'diamond',
+                  size: idx === 0 ? 6 : 4,
+                  symbol: 'circle',
                   color: idx === 0 ? '#00ffff' : '#ff6b6b'
                 },
                 line: { 
-                  width: 1.5,
-                  dash: idx === 0 ? 'solid' : 'dot',
-                  color: idx === 0 ? '#00ffff' : '#ff6b6b'
+                  width: idx === 0 ? 1.5 : 1,
+                  color: idx === 0 ? '#00ffff' : '#ff6b6b',
+                  shape: 'spline',
+                  smoothing: 1.3,
+                  simplify: true
                 }
               }))}
               layout={{

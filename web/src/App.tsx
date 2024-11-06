@@ -119,15 +119,17 @@ const App = () => {
 
   return (
     <Container style={{ 
-      background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
+      background: 'linear-gradient(180deg, #020617 0%, #0f172a 100%)',
       minHeight: '100vh',
-      maxWidth: '1600px', // Increased max width
+      width: '100%',
+      maxWidth: '100%',
+      margin: 0,
       padding: '2rem'
     }}>
       <Flex direction="column" gap="6" py="6">
         {/* Header with gradient text */}
         <Flex justify="between" align="center" mb="8">
-          <Heading as="h1" size="8" style={{ 
+          <Heading as="h1" size="8" className="fade-in" style={{ 
             background: 'linear-gradient(to right, #60a5fa, #818cf8)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
@@ -135,7 +137,7 @@ const App = () => {
           }}>
             Orbital Simulation
           </Heading>
-          <Link to={Routes.FORM}>
+          <Link to={Routes.FORM} className="fade-in delay-1">
             <Button size="3" style={{ 
               background: 'rgba(255,255,255,0.1)',
               backdropFilter: 'blur(10px)',
@@ -154,7 +156,7 @@ const App = () => {
 
         {/* Plots with glass morphism effect */}
         <Flex gap="6" direction={{ initial: 'column', md: 'row' }}>
-          <Card style={{ 
+          <Card className="fade-in delay-1" style={{ 
             flex: 1,
             background: 'rgba(255,255,255,0.03)',
             backdropFilter: 'blur(20px)',
@@ -169,7 +171,7 @@ const App = () => {
               {...plotConfig}
               data={positionData.map((data, idx) => ({
                 ...data,
-                name: idx === 0 ? 'Planet' : 'Satellite',
+                name: idx === 0 ? 'Body1' : 'Body2',
                 mode: 'lines',
                 line: {
                   color: idx === 0 ? '#3b82f6' : '#10b981',
@@ -180,7 +182,7 @@ const App = () => {
             />
           </Card>
 
-          <Card style={{ 
+          <Card className="fade-in delay-2" style={{ 
             flex: 1,
             background: 'rgba(255,255,255,0.03)',
             backdropFilter: 'blur(20px)',
@@ -195,7 +197,7 @@ const App = () => {
               {...plotConfig}
               data={velocityData.map((data, idx) => ({
                 ...data,
-                name: idx === 0 ? 'Planet' : 'Satellite',
+                name: idx === 0 ? 'Body1' : 'Body2',
                 mode: 'lines',
                 line: { 
                   color: idx === 0 ? '#06b6d4' : '#f43f5e',
@@ -208,7 +210,7 @@ const App = () => {
         </Flex>
 
         {/* Initial Conditions Table with modern styling */}
-        <Card style={{ 
+        <Card className="fade-in delay-3" style={{ 
           background: 'rgba(255,255,255,0.03)',
           backdropFilter: 'blur(20px)',
           border: '1px solid rgba(255,255,255,0.1)',

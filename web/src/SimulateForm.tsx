@@ -5,7 +5,7 @@ import _ from 'lodash';
 import React, { useCallback, useState, useMemo, memo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Routes } from 'routes';
-import { motion } from 'framer-motion';
+import './animations.css';
 
 type FormValue = number | '';
 interface FormData {
@@ -35,21 +35,23 @@ const FormFieldComponent = memo(({
   field, 
   value, 
   onChange, 
-  onSliderChange 
+  onSliderChange,
+  className 
 }: { 
   object: string;
   field: string;
   value: FormValue;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSliderChange: (value: number) => void;
+  className?: string;
 }) => (
-  <FormField key={`${object}.${field}`} name={`${object}.${field}`}>
+  <FormField 
+    key={`${object}.${field}`} 
+    name={`${object}.${field}`}
+    className={`form-field ${className || ''}`}
+  >
     <Flex direction="column" gap="2">
-      <FormLabel htmlFor={`${object}.${field}`} style={{ 
-        color: 'var(--text-secondary)',
-        fontSize: '0.875rem',
-        fontWeight: 500 
-      }}>
+      <FormLabel htmlFor={`${object}.${field}`} className="form-label">
         {field.toUpperCase()}
       </FormLabel>
       <Flex align="center" gap="3">
@@ -60,12 +62,7 @@ const FormFieldComponent = memo(({
           value={value}
           onChange={onChange}
           required
-          style={{
-            width: '100px',
-            background: 'var(--input-bg)',
-            border: 'var(--input-border)',
-            borderRadius: '8px',
-          }}
+          className="form-input"
         />
         <Slider
           defaultValue={[value as number]}
@@ -73,11 +70,7 @@ const FormFieldComponent = memo(({
           min={-5}
           step={0.1}
           onValueChange={(value) => onSliderChange(value[0])}
-          style={{ 
-            flex: 1,
-            '--slider-thumb-size': '16px',
-            '--slider-track-height': '4px'
-          }}
+          className="form-slider"
         />
       </Flex>
     </Flex>
@@ -127,86 +120,29 @@ const SimulateForm: React.FC = () => {
     }
   }, [formData, navigate]);
 
-  // Memoize the style objects
-  const containerStyle = useMemo(() => ({
-    '--text-primary': '#e2e8f0',
-    '--text-secondary': '#94a3b8',
-    '--input-bg': 'rgba(255,255,255,0.07)',
-    '--input-border': '1px solid rgba(255,255,255,0.15)',
-    background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '2rem'
-  }), []);
-
-  const cardStyle = useMemo(() => ({
-    width: '600px',
-    background: 'rgba(15, 23, 42, 0.7)',
-    backdropFilter: 'blur(20px)',
-    border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: '24px',
-    boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-    padding: '2.5rem'
-  }), []);
-
-  const objectCardStyle = useMemo(() => ({
-    background: 'rgba(255,255,255,0.03)',
-    border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: '16px',
-    padding: '1.5rem',
-    marginBottom: '1.5rem'
-  }), []);
-
   return (
-    <Container style={containerStyle}>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
-      >
-        <Card style={cardStyle}>
-          <Flex direction="column" gap="4">
-            <Link to={Routes.SIMULATION} style={{ 
-              color: '#94a3b8',
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              fontSize: '0.875rem',
-              marginBottom: '0.5rem'
-            }}>
-              <ArrowLeftIcon /> Back to simulation
-            </Link>
-            
-            <Heading as="h1" size="6" style={{ 
-              background: 'linear-gradient(to right, #60a5fa, #818cf8)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              marginBottom: '2rem',
-              fontSize: '2rem',
-              fontWeight: 600
-            }}>
-              New Simulation
-            </Heading>
+    <Container className="form-container">
+      <Card className="fade-in">
+        <Flex direction="column" gap="3">
+          <Link to={Routes.SIMULATION} className="fade-in delay-1">
+            <ArrowLeftIcon /> Back to simulation
+          </Link>
+          
+          <Heading as="h1" size="6" className="fade-in delay-1">
+            New Simulation
+          </Heading>
 
-            <Form onSubmit={handleSubmit}>
-              {['Body1', 'Body2'].map((object) => (
-                <motion.div 
+          <Form onSubmit={handleSubmit}>
+            <Flex direction="row" gap="4">
+              {['Body1', 'Body2'].map((object, index) => (
+                <div 
                   key={object}
-                  style={objectCardStyle}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: object === 'Body1' ? 0.2 : 0.3 }}
+                  className={`object-card fade-in delay-${index + 2}`}
                 >
-                  <Heading size="4" style={{ 
-                    marginBottom: '1.5rem',
-                    color: '#e2e8f0'
-                  }}>
+                  <Heading size="4" className="object-heading">
                     {object} Parameters
                   </Heading>
-                  <Flex direction="column" gap="4">
+                  <Flex direction="column" gap="3">
                     {['x', 'y', 'z', 'vx', 'vy', 'vz', 'mass'].map((field) => (
                       <FormFieldComponent
                         key={`${object}.${field}`}
@@ -218,31 +154,18 @@ const SimulateForm: React.FC = () => {
                       />
                     ))}
                   </Flex>
-                </motion.div>
+                </div>
               ))}
-              
-              <Flex justify="center" mt="6">
-                <Button size="3" style={{
-                  background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
-                  border: 'none',
-                  padding: '0 2.5rem',
-                  height: '3rem',
-                  borderRadius: '12px',
-                  fontSize: '1rem',
-                  fontWeight: 500,
-                  transition: 'all 0.2s ease',
-                  ':hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 8px 16px rgba(59, 130, 246, 0.3)'
-                  }
-                }}>
-                  Start Simulation
-                </Button>
-              </Flex>
-            </Form>
-          </Flex>
-        </Card>
-      </motion.div>
+            </Flex>
+            
+            <Flex justify="center" mt="4">
+              <Button size="3" className="fade-in delay-3">
+                Start Simulation
+              </Button>
+            </Flex>
+          </Form>
+        </Flex>
+      </Card>
     </Container>
   );
 };

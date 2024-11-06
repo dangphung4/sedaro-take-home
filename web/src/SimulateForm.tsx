@@ -9,17 +9,23 @@ import { motion } from 'framer-motion';
 
 type FormValue = number | '';
 interface FormData {
-  Planet: {
+  Body1: {
     x: FormValue;
     y: FormValue;
+    z: FormValue;
     vx: FormValue;
     vy: FormValue;
+    vz: FormValue;
+    mass: FormValue;
   };
-  Satellite: {
+  Body2: {
     x: FormValue;
     y: FormValue;
+    z: FormValue;
     vx: FormValue;
     vy: FormValue;
+    vz: FormValue;
+    mass: FormValue;
   };
 }
 
@@ -81,8 +87,8 @@ const FormFieldComponent = memo(({
 const SimulateForm: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
-    Planet: { x: 0, y: 0.1, vx: 0.1, vy: 0 },
-    Satellite: { x: 0, y: 1, vx: 1, vy: 0 },
+    Body1: { x: -0.73, y: 0, z: 0, vx: 0, vy: -0.0015, vz: 0, mass: 1 },
+    Body2: { x: 60.34, y: 0, z: 0, vx: 0, vy: 0.13, vz: 0, mass: 0.0123 },
   });
 
   // Debounced form updates
@@ -186,13 +192,13 @@ const SimulateForm: React.FC = () => {
             </Heading>
 
             <Form onSubmit={handleSubmit}>
-              {['Planet', 'Satellite'].map((object) => (
+              {['Body1', 'Body2'].map((object) => (
                 <motion.div 
                   key={object}
                   style={objectCardStyle}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: object === 'Planet' ? 0.2 : 0.3 }}
+                  transition={{ delay: object === 'Body1' ? 0.2 : 0.3 }}
                 >
                   <Heading size="4" style={{ 
                     marginBottom: '1.5rem',
@@ -201,7 +207,7 @@ const SimulateForm: React.FC = () => {
                     {object} Parameters
                   </Heading>
                   <Flex direction="column" gap="4">
-                    {['x', 'y', 'vx', 'vy'].map((field) => (
+                    {['x', 'y', 'z', 'vx', 'vy', 'vz', 'mass'].map((field) => (
                       <FormFieldComponent
                         key={`${object}.${field}`}
                         object={object}

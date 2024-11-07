@@ -156,7 +156,7 @@ const App = () => {
 
         {/* Plots with glass morphism effect */}
         <Flex gap="6" direction={{ initial: 'column', md: 'row' }}>
-          <Card className="fade-in delay-1" style={{ 
+          <Card className="plot-card fade-in delay-1" style={{ 
             flex: 1,
             background: 'rgba(255,255,255,0.03)',
             backdropFilter: 'blur(20px)',
@@ -182,7 +182,7 @@ const App = () => {
             />
           </Card>
 
-          <Card className="fade-in delay-2" style={{ 
+          <Card className="plot-card fade-in delay-2" style={{ 
             flex: 1,
             background: 'rgba(255,255,255,0.03)',
             backdropFilter: 'blur(20px)',
@@ -230,10 +230,14 @@ const App = () => {
 
             <Table.Body>
               {Object.entries(initialState).map(([agentId, { x, y, vx, vy }]) => (
-                <Table.Row key={agentId} style={{ 
-                  transition: 'background 0.2s',
-                  ':hover': { background: 'rgba(255,255,255,0.05)' }
-                }}>
+                <Table.Row 
+                  key={agentId} 
+                  className="table-row"
+                  style={{ 
+                    transition: 'background 0.2s',
+                    ':hover': { background: 'rgba(255,255,255,0.05)' }
+                  }}
+                >
                   <Table.RowHeaderCell>
                     <Text weight="medium" style={{ color: '#e2e8f0' }}>{agentId}</Text>
                   </Table.RowHeaderCell>
